@@ -1,0 +1,24 @@
+meta {
+  name: inserir-hotel
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:5000/hoteis/oficina5
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer       eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc5MzE4MTI4OSwianRpIjoiODczYTAwMDEtNWQ0Ny00MGI3LWI2YTUtNDAxZjcwZWU0NzUyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzkzMTgxMjg5LCJjc3JmIjoiNmIzMGFkNTgtNjI0Yy00MDExLWJlNzItYjgyMzVhOTFlNDM4IiwiZXhwIjoxNzkzMTgyMTg5fQ.ZuvLEoTj8qjYLxRIIb4aJzKkuVvR_lYfR0qjE2R14zY
+}
+
+body:json {
+  {
+    "nome": "Hotel Oficina",
+    "estrelas": 4.7,
+    "diaria": 190.99,
+    "cidade": "Famalicão"
+  }
+}

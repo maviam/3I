@@ -1,7 +1,7 @@
 # Este "hotel.py" serve para os Gets, Posts...
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel  # importar a classe HotelModel do hotel.py em "models/"
-
+from flask_jwt_extended import jwt_required
 
 # cada rota/endpoint(link, o get, o post...) vai ter de estar associado a uma classe
 class Hoteis(Resource):
@@ -29,6 +29,7 @@ class Hotel(Resource):
 
     # Criar
     # NOTA para não achar estranho: enquanto não estamos a lidar com bases de dados os Posts não vão inserir os dados na lista para sempre, só enquanto o server estiver ligado.
+    @jwt_required()
     def post(self, hotel_id):  # o hotel_id vai no URL (endpoint), porque vai ser o identificador de cada hotel
         dados = Hotel.argumentos.parse_args()  # cria um dicionário com as quatro variáveis (dados)
         hotel = HotelModel.find_hotel(hotel_id)
@@ -46,6 +47,7 @@ class Hotel(Resource):
 
 
     # Atualizar
+    @jwt_required()
     def put(self, hotel_id):
         dados = Hotel.argumentos.parse_args()  # cria um dicionário com as quatro variáveis (dados)  || "dados" é um dicionario
 
@@ -65,6 +67,7 @@ class Hotel(Resource):
         return novo_hotel.json(), 201  # "200" é o RESPONSE CODE
 
     # Apagar
+    @jwt_required()
     def delete(self, hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel is not None: 
