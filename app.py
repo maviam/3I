@@ -1,25 +1,29 @@
 # Inicio da aplicação (app.py)
 from flask import Flask
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Api
 from resources.hotel import Hoteis, Hotel
-from resources.user import User, UserRegister
+from resources.user import User, UserRegister, UserLogin
 from con_sql_alchemy import bd
+from flask_jwt_extended import JWTManager
 
 # NOTA IMPORTANTE: antes de correr o programa temos de entrar no ambiente virtual(se ainda não estivermos) ". venv/bin/activate"
 # depois podemos iniciar o servidor "python app.py"
 
 app = Flask(__name__)
 api = Api(app)  # variavel para dizer que estou a trabalhar na minha API
+jwt = JWTManager(app) # Inicializa o JWT para tratar da autenticação das páginas
 
 # Configurações
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hoteis.db"  # vai criar uma base de dados com o nome hoteis.db || SQLLite é uma base de dados muito lee para coisas simples, mas o SQLAlchemy pode
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # serve para o servidor não mostrar os "logs" durante o processo da aplicação
+app.config["JWT_SECRET_KEY"] = "a_minha_chave_secreta_longa_e_intransmissivel"
 
 # CRIAR ROTAS(endpoints) para fazer os pedidos
 api.add_resource(Hoteis,"/hoteis")
 api.add_resource(Hotel, "/hoteis/<string:hotel_id>")  # como a class Hotel recebe o parametro "hotel_id" entao temos de dizer que vai receber uma String
 api.add_resource(User, "/user/<string:username>")
 api.add_resource(UserRegister, "/registar")
+api.add_resource(UserLogin,"/login")
 
 if __name__ == "__main__":
     bd.init_app(app)

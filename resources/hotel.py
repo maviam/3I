@@ -55,15 +55,14 @@ class Hotel(Resource):
             try:
                 hotel.update_hotel(*dados) # um asterisco "*" serve para ir buscar os valores | (se passarmos sem nenhum "*" ele devolve o dicionário todo)
                 hotel.save_hotel()
-                return hoteis, 200  # devolve RESPONSE CODE 201 (Created)
+                return hotel, 200  # devolve RESPONSE CODE 201 (Created)
             except:  # Senão...
                 return{ "mensagem": "Um erro interno do servidor aconteceu..."}, 500 # RESPONSE ERROR 500 - erro na base de dados
         
         # Se o hotel_id não existir, cria o hotel
         novo_hotel = HotelModel(hotel_id, **dados)  # dois "**" chama um dicionário, dois asteriscord "**" serve para is buscar as chaves/keys | (se passarmos sem nenhum "*" ele devolve o dicionário todo)
-        hoteis.save_hotel()
+        novo_hotel.save_hotel()
         return novo_hotel.json(), 201  # "200" é o RESPONSE CODE
-
 
     # Apagar
     def delete(self, hotel_id):
