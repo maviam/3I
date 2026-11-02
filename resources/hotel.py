@@ -5,11 +5,18 @@ from flask_jwt_extended import jwt_required
 
 # cada rota/endpoint(link, o get, o post...) vai ter de estar associado a uma classe
 class Hoteis(Resource):
-    # Buscar
-    def get(self):
-        # API retorna sempre um JSON(dicionário ( {"chave": "valor"} ))
-        return { "hoteis": [hotel.json() for hotel in HotelModel.query.all()] }  # vai devolver cada dicionario
+    parametros = reqparse.RequestParser() # Selecionar dados passados na url
+    parametros.add_argument("cidade", type=str, default="", location="args")
+    parametros.add_argument("estrelas_min", type=float, default=0, location="args")
+    parametros.add_argument("estrelas_max", type=float, default=0, location="args")
+    parametros.add_argument("diaria_min", type=float, default=0, location="args")
+    parametros.add_argument("diaria_max", type=float, default=0, location="args")
+    parametros.add_argument("itens", type=int, default=5, location="args")
+    parametros.add_argument("pagina", type=int, default=1, location="args")
 
+    def get(self):
+        meus_filtros = Hoteis.parametros.parse_args()
+        query = HotelModel.query # Pesquisar por ... na tabela que HotelModel representa
 
 # API
 class Hotel(Resource):

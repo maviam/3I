@@ -2,9 +2,11 @@
 from flask import Flask
 from flask_restful import Api
 from resources.hotel import Hoteis, Hotel
-from resources.user import User, UserRegister, UserLogin
+from resources.user import User, UserRegister, UserLogin, UserLogout
 from con_sql_alchemy import bd
 from flask_jwt_extended import JWTManager
+from blocklist import BLOCKLIST
+from datetime import timedelta
 
 # NOTA IMPORTANTE: antes de correr o programa temos de entrar no ambiente virtual(se ainda não estivermos) ". venv/bin/activate"
 # depois podemos iniciar o servidor "python app.py"
@@ -17,6 +19,17 @@ jwt = JWTManager(app) # Inicializa o JWT para tratar da autenticação das pági
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hoteis.db"  # vai criar uma base de dados com o nome hoteis.db || SQLLite é uma base de dados muito lee para coisas simples, mas o SQLAlchemy pode
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # serve para o servidor não mostrar os "logs" durante o processo da aplicação
 app.config["JWT_SECRET_KEY"] = "a_minha_chave_secreta_longa_e_intransmissivel"
+app.config["JWT_BLACKLIST_ENABLED"] = True # Habilita a lista de tokens JWT inválidos
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=10)
+
+@jwt.token_in_blocklist_loader
+def verifica_blocklist(jwt_header,jwt_payload):
+    jti = jwt_payload["jti"]
+    return jti in BLOCKLIST
+
+@jwt.revoked_token_loader
+def token_invalido(jwt_header,jwt_payload):
+    return { "mensagem": "Logout efetuado! Faça login para aceder novamente!"}
 
 # CRIAR ROTAS(endpoints) para fazer os pedidos
 api.add_resource(Hoteis,"/hoteis")
@@ -24,6 +37,7 @@ api.add_resource(Hotel, "/hoteis/<string:hotel_id>")  # como a class Hotel receb
 api.add_resource(User, "/user/<string:username>")
 api.add_resource(UserRegister, "/registar")
 api.add_resource(UserLogin,"/login")
+api.add_resource(UserLogout,"/logout")
 
 if __name__ == "__main__":
     bd.init_app(app)
